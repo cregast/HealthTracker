@@ -368,7 +368,7 @@
     <h1>Trends</h1>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1536buiSbUQYK7VnIYwQt3byAQsHhR8j2qvco5OFKwhg/edit?usp=sharing"
-         target="_blank" rel="noopener" class="nav-link sheet-link" title="Open source sheet">Source Sheet</a>
+         target="_blank" rel="noopener" class="nav-link sheet-link" title="Open source sheet">Raw Data</a>
       <a href="index.html" class="nav-link">＋ Log Entry</a>
     </div>
   </div>
@@ -452,7 +452,8 @@ function parseGViz(json) {
       if (dm) {
         date = new Date(+dm[1], +dm[2], +dm[3], +(dm[4]||0), +(dm[5]||0), +(dm[6]||0));
       } else {
-        date = new Date(rawDate);
+        // Convert "2026-06-10 16:43:33" to ISO format
+        date = new Date(rawDate.replace(' ', 'T'));
       }
     } else if (typeof rawDate === 'number') {
       date = new Date(rawDate);
