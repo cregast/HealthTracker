@@ -43,7 +43,7 @@
       align-items: center;
       justify-content: center;
       min-height: 100dvh;
-      padding: env(safe-area-inset-top, 20px) 24px env(safe-area-inset-bottom, 20px);
+      padding: env(safe-area-inset-top, 20px) 24px calc(env(safe-area-inset-bottom, 0px) + 74px);
       background-image:
         radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59,130,246,0.15) 0%, transparent 60%),
         radial-gradient(ellipse 60% 40% at 80% 110%, rgba(6,182,212,0.08) 0%, transparent 60%);
@@ -257,6 +257,41 @@
     }
 
     .field-error.visible { display: block; }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 50;
+      background: rgba(10,15,30,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding: 10px 0 calc(env(safe-area-inset-bottom, 0px) + 10px);
+      display: flex;
+      justify-content: center;
+    }
+
+    .nav-tab {
+      flex: 1;
+      max-width: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 0;
+      text-decoration: none;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-tab svg { opacity: 0.5; transition: opacity 0.15s; }
+    .nav-tab.active { color: var(--accent); }
+    .nav-tab.active svg { opacity: 1; }
   </style>
 </head>
 <body>
@@ -308,6 +343,21 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-tab active">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+    </svg>
+    Log
+  </a>
+  <a href="trends.html" class="nav-tab">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    </svg>
+    Trends
+  </a>
+</nav>
 
 <script>
   // ── CONFIG ──────────────────────────────────────────────────────────────
@@ -409,17 +459,22 @@
     };
 
     try {
-      await fetch(APPS_SCRIPT_URL, {
+      const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors',
         body: JSON.stringify(payload),
       });
-      // If we get here without throwing, the request was sent
-      const ts = formatDate(now) + ' ' + now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
-      localStorage.setItem(LS_KEY, ts);
-      document.getElementById('last-saved').textContent = `Last saved: ${ts}`;
-      showToast('✓ Saved to sheet', 'success');
-      ['bp','hr','weight'].forEach(id => document.getElementById(id).value = '');
+      const text = await res.text();
+      if (res.ok && text.includes('OK')) {
+        const ts = formatDate(now) + ' ' + now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+        localStorage.setItem(LS_KEY, ts);
+        document.getElementById('last-saved').textContent = `Last saved: ${ts}`;
+        showToast('✓ Saved to sheet', 'success');
+        // Clear fields
+        ['bp','hr','weight'].forEach(id => document.getElementById(id).value = '');
+      } else {
+        showToast('Save failed — check console', 'error');
+        console.error('Apps Script response:', text);
+      }
     } catch (err) {
       showToast('Network error', 'error');
       console.error(err);
