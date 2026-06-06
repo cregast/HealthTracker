@@ -1,8 +1,8 @@
 {
-  "name": "Vitals Tracker",
-  "short_name": "Vitals",
+  "name": "Gramps' Vitals",
+  "short_name": "OberVitals",
   "description": "Log blood pressure, heart rate, and weight",
-  "start_url": "/index.html",
+  "start_url": "/HealthTracker/index.html",
   "display": "standalone",
   "background_color": "#0a0f1e",
   "theme_color": "#0a0f1e",
