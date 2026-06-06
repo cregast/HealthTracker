@@ -82,6 +82,12 @@
       background-clip: text;
     }
 
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .nav-link {
       font-size: 12px;
       color: var(--muted);
@@ -91,8 +97,17 @@
       border: 1px solid var(--border);
       border-radius: 100px;
       transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
     }
     .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    .nav-link.sheet-link {
+      padding: 5px 9px;
+      font-size: 15px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+    }
 
     /* ── RANGE PILLS ── */
     .range-bar {
@@ -351,7 +366,11 @@
 <div class="topbar">
   <div class="topbar-inner">
     <h1>Trends</h1>
-    <a href="index.html" class="nav-link">＋ Log Entry</a>
+    <div class="topbar-actions">
+      <a href="https://docs.google.com/spreadsheets/d/1536buiSbUQYK7VnIYwQt3byAQsHhR8j2qvco5OFKwhg/edit?usp=sharing"
+         target="_blank" rel="noopener" class="nav-link sheet-link" title="Open source sheet">&#x1F4CA;</a>
+      <a href="index.html" class="nav-link">＋ Log Entry</a>
+    </div>
   </div>
 </div>
 
