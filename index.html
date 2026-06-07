@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Vitals" />
   <meta name="theme-color" content="#0a0f1e" />
@@ -360,7 +360,6 @@
     <div class="field">
       <label>Heart Rate</label>
       <div class="input-wrap">
-        <span class="icon">💓</span>
         <input type="number" id="hr" inputmode="numeric" placeholder="72" min="30" max="250" autocomplete="off" />
       </div>
       <span class="field-error" id="hr-error">Enter a valid heart rate (30–250 bpm)</span>
@@ -369,7 +368,6 @@
     <div class="field">
       <label>Weight (lbs)</label>
       <div class="input-wrap">
-        <span class="icon">⚖️</span>
         <input type="number" id="weight" inputmode="decimal" placeholder="175.0" step="0.1" min="50" max="999" autocomplete="off" />
       </div>
       <span class="field-error" id="weight-error">Enter a valid weight</span>
