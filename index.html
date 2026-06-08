@@ -421,7 +421,7 @@
                  min="30" max="200" autocomplete="off" aria-label="Diastolic" />
         </div>
       </div>
-      <span class="field-error" id="bp-error">Check systolic (50–300) and diastolic (30–200)</span>
+      <span class="field-error" id="bp-error">Check systolic (50-300) and diastolic (30-200)</span>
     </div>
 
     <div class="field">
@@ -429,7 +429,7 @@
       <div class="input-wrap">
         <input type="number" id="hr" inputmode="numeric" placeholder="72" min="30" max="250" autocomplete="off" />
       </div>
-      <span class="field-error" id="hr-error">Enter a valid heart rate (30–250 bpm)</span>
+      <span class="field-error" id="hr-error">Enter a valid heart rate (30-250 bpm)</span>
     </div>
 
     <div class="field">
@@ -501,7 +501,9 @@
   document.getElementById('today-date').textContent = formatDate(new Date());
 
   const ls = localStorage.getItem(LS_KEY);
-  if (ls) document.getElementById('last-saved').textContent = `Last saved: ${ls}`;
+  if (ls) {
+    document.getElementById('last-saved').textContent = `Last saved: ${ls}`;
+  }
 
   // ── TOAST ─────────────────────────────────────────────────────────────────
   function showToast(msg, type = 'success') {
@@ -528,7 +530,9 @@
     document.getElementById(id).classList.add('error');
     const errKey = (id === 'bp-sys' || id === 'bp-dia') ? 'bp' : id;
     const errEl  = document.getElementById(`${errKey}-error`);
-    if (msg) errEl.textContent = msg;
+    if (msg) {
+      errEl.textContent = msg;
+    }
     errEl.classList.add('visible');
   }
 
@@ -541,9 +545,9 @@
     const hrRaw     = document.getElementById('hr').value.trim();
     const weightRaw = document.getElementById('weight').value.trim();
 
-    const sys = sysRaw ? parseInt(sysRaw)   : null;
-    const dia = diaRaw ? parseInt(diaRaw)   : null;
-    const hr  = hrRaw  ? parseInt(hrRaw)    : null;
+    const sys = sysRaw ? parseInt(sysRaw) : null;
+    const dia = diaRaw ? parseInt(diaRaw) : null;
+    const hr  = hrRaw  ? parseInt(hrRaw)  : null;
     const wt  = weightRaw ? parseFloat(weightRaw) : null;
 
     let valid = true;
@@ -551,8 +555,14 @@
     // BP: either both filled and valid, or both empty
     const sysEntered = sys !== null && !isNaN(sys);
     const diaEntered = dia !== null && !isNaN(dia);
-    if (sysEntered && (isNaN(sys) || sys < 50 || sys > 300)) { setError('bp-sys'); valid = false; }
-    if (diaEntered && (isNaN(dia) || dia < 30 || dia > 200)) { setError('bp-dia'); valid = false; }
+    if (sysEntered && (isNaN(sys) || sys < 50 || sys > 300)) {
+      setError('bp-sys');
+      valid = false;
+    }
+    if (diaEntered && (isNaN(dia) || dia < 30 || dia > 200)) {
+      setError('bp-dia');
+      valid = false;
+    }
     if (sysEntered !== diaEntered) {
       setError('bp-sys');
       setError('bp-dia');
@@ -561,8 +571,15 @@
       valid = false;
     }
 
-    if (hrRaw && (isNaN(hr) || hr < 30 || hr > 250))       { setError('hr');     valid = false; }
-    if (weightRaw && (isNaN(wt) || wt < 50 || wt > 999))   { setError('weight'); valid = false; }
+    if (hrRaw && (isNaN(hr) || hr < 30 || hr > 250)) {
+      setError('hr');
+      valid = false;
+    }
+
+    if (weightRaw && (isNaN(wt) || wt < 50 || wt > 999)) {
+      setError('weight');
+      valid = false;
+    }
 
     // At least one field must have a value
     if (!sysEntered && !hrRaw && !weightRaw) {
@@ -570,10 +587,7 @@
       return;
     }
 
-    if (!valid) return;
-
-    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-      showToast('⚠️ Apps Script URL not configured', 'error');
+    if (!valid) {
       return;
     }
 
@@ -618,15 +632,20 @@
     document.getElementById(id).addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        if (i < FIELD_ORDER.length - 1) document.getElementById(FIELD_ORDER[i + 1]).focus();
-        else handleSave();
+        if (i < FIELD_ORDER.length - 1) {
+          document.getElementById(FIELD_ORDER[i + 1]).focus();
+        } else {
+          handleSave();
+        }
       }
     });
   });
 
   // Auto-advance from sys when 3 digits entered
   document.getElementById('bp-sys').addEventListener('input', e => {
-    if (e.target.value.length >= 3) document.getElementById('bp-dia').focus();
+    if (e.target.value.length >= 3) {
+      document.getElementById('bp-dia').focus();
+    }
   });
 
   // ── SERVICE WORKER ────────────────────────────────────────────────────────
