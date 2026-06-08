@@ -549,8 +549,8 @@
     let valid = true;
 
     // BP: either both filled and valid, or both empty
-    const sysEntered = sys !== null;
-    const diaEntered = dia !== null;
+    const sysEntered = sys !== null && !isNaN(sys);
+    const diaEntered = dia !== null && !isNaN(dia);
     if (sysEntered && (isNaN(sys) || sys < 50 || sys > 300)) { setError('bp-sys'); valid = false; }
     if (diaEntered && (isNaN(dia) || dia < 30 || dia > 200)) { setError('bp-dia'); valid = false; }
     if (sysEntered !== diaEntered) {
@@ -586,8 +586,8 @@
       date:   now.toISOString(),
       sys:    sysEntered ? sys : null,
       dia:    diaEntered ? dia : null,
-      hr:     hrRaw      ? hr  : null,
-      weight: weightRaw  ? wt  : null,
+      hr:     (hr !== null && !isNaN(hr)) ? hr : null,
+      weight: (wt !== null && !isNaN(wt)) ? wt : null,
     };
 
     try {
