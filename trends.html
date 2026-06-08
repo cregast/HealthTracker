@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Vitals" />
-  <meta name="theme-color" content="#0a0f1e" />
+  <meta name="theme-color" content="#f8fafc" id="theme-color-meta" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Vitals — Trends</title>
@@ -14,7 +14,38 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap');
 
-    :root {
+    /* ── LIGHT THEME (default) ── */
+    :root, [data-theme="light"] {
+      --bg:       #f8fafc;
+      --surface:  #ffffff;
+      --border:   #e2e8f0;
+      --accent:   #2563eb;
+      --accent2:  #0891b2;
+      --accent3:  #7c3aed;
+      --text:     #0f172a;
+      --muted:    #64748b;
+      --success:  #059669;
+      --warn:     #d97706;
+      --radius:   16px;
+      --shadow:   0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.05);
+      --bg-grad1: rgba(37,99,235,0.06);
+      --bg-grad2: rgba(124,58,237,0.03);
+      --nav-bg:   rgba(248,250,252,0.92);
+      --topbar-bg: rgba(248,250,252,0.88);
+      --c-sys:    #dc2626;
+      --c-dia:    #ea580c;
+      --c-hr:     #0891b2;
+      --c-wt:     #059669;
+      --grid-color: rgba(226,232,240,0.8);
+      --tick-color: #94a3b8;
+      --tooltip-bg: #ffffff;
+      --tooltip-border: #e2e8f0;
+      --tooltip-title: #64748b;
+      --tooltip-body:  #0f172a;
+    }
+
+    /* ── DARK THEME ── */
+    [data-theme="dark"] {
       --bg:       #0a0f1e;
       --surface:  #111827;
       --border:   #1e2d45;
@@ -26,12 +57,21 @@
       --success:  #10b981;
       --warn:     #f59e0b;
       --radius:   16px;
-
-      /* chart line colors */
+      --shadow:   0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.3);
+      --bg-grad1: rgba(59,130,246,0.12);
+      --bg-grad2: rgba(139,92,246,0.07);
+      --nav-bg:   rgba(10,15,30,0.92);
+      --topbar-bg: rgba(10,15,30,0.85);
       --c-sys:    #ef4444;
       --c-dia:    #f97316;
       --c-hr:     #06b6d4;
       --c-wt:     #10b981;
+      --grid-color: rgba(30,45,69,0.6);
+      --tick-color: #64748b;
+      --tooltip-bg: #111827;
+      --tooltip-border: #1e2d45;
+      --tooltip-title: #94a3b8;
+      --tooltip-body:  #e2e8f0;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,8 +86,9 @@
       min-height: 100dvh;
       padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
       background-image:
-        radial-gradient(ellipse 80% 40% at 50% -5%, rgba(59,130,246,0.12) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 30% at 90% 100%, rgba(139,92,246,0.07) 0%, transparent 50%);
+        radial-gradient(ellipse 80% 40% at 50% -5%, var(--bg-grad1) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 30% at 90% 100%, var(--bg-grad2) 0%, transparent 50%);
+      transition: background 0.2s, color 0.2s;
     }
 
     /* ── TOP NAV ── */
@@ -55,11 +96,12 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(10,15,30,0.85);
+      background: var(--topbar-bg);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       padding: env(safe-area-inset-top, 16px) 20px 0;
+      transition: background 0.2s, border-color 0.2s;
     }
 
     .topbar-inner {
@@ -76,10 +118,7 @@
       font-size: 20px;
       font-weight: 800;
       letter-spacing: -0.3px;
-      background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--text);
     }
 
     .topbar-actions {
@@ -87,6 +126,34 @@
       align-items: center;
       gap: 8px;
     }
+
+    /* ── THEME TOGGLE (topbar variant) ── */
+    .theme-toggle {
+      background: var(--border);
+      border: none;
+      border-radius: 100px;
+      width: 40px;
+      height: 24px;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--surface);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    [data-theme="dark"] .theme-toggle { background: var(--accent); }
+    [data-theme="dark"] .theme-toggle::after { transform: translateX(16px); }
 
     .nav-link {
       font-size: 12px;
@@ -121,11 +188,11 @@
     .range-pill {
       flex: 1;
       text-align: center;
-      padding: 7px 4px;
+      padding: 8px 4px;
       border-radius: 100px;
       border: 1px solid var(--border);
       font-family: 'DM Mono', monospace;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--muted);
       cursor: pointer;
@@ -135,9 +202,13 @@
     }
 
     .range-pill.active {
-      background: rgba(59,130,246,0.15);
+      background: rgba(37,99,235,0.12);
       border-color: var(--accent);
       color: var(--accent);
+    }
+
+    [data-theme="dark"] .range-pill.active {
+      background: rgba(59,130,246,0.15);
     }
 
     /* ── CONTENT ── */
@@ -165,7 +236,9 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      box-shadow: var(--shadow);
       animation: fadeUp 0.4s ease both;
+      transition: background 0.2s, border-color 0.2s;
     }
 
     .stat-chip:nth-child(1) { animation-delay: 0.05s; }
@@ -179,12 +252,13 @@
     }
 
     .stat-label {
-      font-size: 9px;
+      font-size: 10px;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
 
+    /* Plain, readable stat values — no display font */
     .stat-value {
       font-family: 'DM Mono', monospace;
       font-size: 20px;
@@ -194,7 +268,7 @@
     }
 
     .stat-sub {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--muted);
     }
 
@@ -209,7 +283,9 @@
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 20px 16px 16px;
+      box-shadow: var(--shadow);
       animation: fadeUp 0.5s ease both;
+      transition: background 0.2s, border-color 0.2s;
     }
 
     .chart-card:nth-of-type(1) { animation-delay: 0.1s; }
@@ -228,6 +304,7 @@
       font-size: 14px;
       font-weight: 700;
       letter-spacing: 0.02em;
+      color: var(--text);
     }
 
     .chart-legend {
@@ -244,8 +321,7 @@
     }
 
     .legend-dot {
-      width: 6px;
-      height: 6px;
+      width: 6px; height: 6px;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -255,7 +331,7 @@
       height: 160px;
     }
 
-    /* ── LOADING / EMPTY ── */
+    /* ── STATE VIEWS ── */
     .state-view {
       display: flex;
       flex-direction: column;
@@ -266,10 +342,7 @@
       color: var(--muted);
     }
 
-    .state-icon {
-      font-size: 32px;
-      opacity: 0.5;
-    }
+    .state-icon { font-size: 32px; opacity: 0.5; }
 
     .state-msg {
       font-size: 13px;
@@ -277,9 +350,7 @@
       line-height: 1.6;
     }
 
-    .pulse {
-      animation: pulse 1.4s ease-in-out infinite;
-    }
+    .pulse { animation: pulse 1.4s ease-in-out infinite; }
 
     @keyframes pulse {
       0%, 100% { opacity: 0.4; }
@@ -298,31 +369,27 @@
       background: transparent;
       color: var(--muted);
       font-family: 'DM Mono', monospace;
-      font-size: 11px;
+      font-size: 12px;
       cursor: pointer;
       transition: color 0.15s, border-color 0.15s;
     }
 
     .refresh-btn:hover { color: var(--text); border-color: var(--accent2); }
-
     .refresh-icon { transition: transform 0.5s ease; }
-    .refresh-btn.spinning .refresh-icon { transform: rotate(360deg); }
 
     /* ── BOTTOM NAV ── */
     .bottom-nav {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       z-index: 50;
-      background: rgba(10,15,30,0.92);
+      background: var(--nav-bg);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid var(--border);
       padding: 10px 0 calc(env(safe-area-inset-bottom, 0px) + 10px);
       display: flex;
       justify-content: center;
-      gap: 0;
+      transition: background 0.2s, border-color 0.2s;
     }
 
     .nav-tab {
@@ -335,7 +402,7 @@
       padding: 6px 0;
       text-decoration: none;
       color: var(--muted);
-      font-size: 10px;
+      font-size: 11px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       transition: color 0.15s;
@@ -345,19 +412,6 @@
     .nav-tab svg { opacity: 0.5; transition: opacity 0.15s; }
     .nav-tab.active { color: var(--accent); }
     .nav-tab.active svg { opacity: 1; }
-
-    /* ── SKELETON ── */
-    .skeleton {
-      border-radius: 8px;
-      background: linear-gradient(90deg, var(--border) 25%, rgba(30,45,69,0.7) 50%, var(--border) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    @keyframes shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
   </style>
 </head>
 <body>
@@ -367,6 +421,7 @@
   <div class="topbar-inner">
     <h1>Trends</h1>
     <div class="topbar-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode"></button>
       <a href="https://docs.google.com/spreadsheets/d/1UJxAmNGpHcLYxTVcEdVv5Amvd0NKAAp8Bm45kVirwoc/edit?usp=sharing"
          target="_blank" rel="noopener" class="nav-link sheet-link" title="Open source sheet">Raw Data</a>
       <a href="index.html" class="nav-link">＋ Log Entry</a>
@@ -384,11 +439,88 @@
 
 <!-- MAIN CONTENT -->
 <div class="content" id="content">
-  <!-- Populated by JS -->
-  <div class="state-view">
+
+  <div id="state-loading" class="state-view">
     <div class="state-icon pulse">⏳</div>
     <div class="state-msg">Loading your data…</div>
   </div>
+
+  <div id="state-empty" class="state-view" style="display:none">
+    <div class="state-icon">📭</div>
+    <div class="state-msg">No entries in this range.<br>Log some vitals to see trends.</div>
+  </div>
+
+  <div id="state-error" class="state-view" style="display:none">
+    <div class="state-icon">⚠️</div>
+    <div class="state-msg" id="error-msg">Couldn't load data.</div>
+  </div>
+
+  <div id="data-views" style="display:none">
+
+    <!-- STAT CHIPS -->
+    <div class="stats-row">
+      <div class="stat-chip chip-bp">
+        <div class="stat-label">Latest BP</div>
+        <div class="stat-value" id="stat-bp">—</div>
+        <div class="stat-sub"  id="stat-bp-avg">avg —</div>
+      </div>
+      <div class="stat-chip chip-hr">
+        <div class="stat-label">Latest HR</div>
+        <div class="stat-value" id="stat-hr">—</div>
+        <div class="stat-sub"  id="stat-hr-avg">avg —</div>
+      </div>
+      <div class="stat-chip chip-wt">
+        <div class="stat-label">Latest Weight</div>
+        <div class="stat-value" id="stat-wt">—</div>
+        <div class="stat-sub"  id="stat-wt-avg">avg —</div>
+      </div>
+      <div class="stat-chip chip-avg">
+        <div class="stat-label">Entries</div>
+        <div class="stat-value" id="stat-count">—</div>
+        <div class="stat-sub"  id="stat-range">—</div>
+      </div>
+    </div>
+
+    <!-- BP CHART -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Blood Pressure</div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c-sys)"></div>SYS</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c-dia)"></div>DIA</div>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-bp"></canvas></div>
+    </div>
+
+    <!-- HR CHART -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Heart Rate</div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c-hr)"></div>bpm</div>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-hr"></canvas></div>
+    </div>
+
+    <!-- WEIGHT CHART -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Weight</div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c-wt)"></div>lbs</div>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-wt"></canvas></div>
+    </div>
+
+    <!-- REFRESH -->
+    <button class="refresh-btn" id="refresh-btn" onclick="doRefresh()">
+      <span class="refresh-icon" id="refresh-icon">↻</span> Refresh data
+    </button>
+
+  </div><!-- /data-views -->
 </div>
 
 <!-- BOTTOM NAV -->
@@ -408,27 +540,68 @@
 </nav>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────────────────────────
-const SHEET_ID = '1UJxAmNGpHcLYxTVcEdVv5Amvd0NKAAp8Bm45kVirwoc';
-// ────────────────────────────────────────────────────────────────────────────
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const SHEET_ID    = '1UJxAmNGpHcLYxTVcEdVv5Amvd0NKAAp8Bm45kVirwoc';
+const LS_THEME_KEY = 'vitals_theme';
+// ─────────────────────────────────────────────────────────────────────────────
 
-let allRows   = [];
+let allRows    = [];
 let activeDays = 90;
-let charts    = {};
+let charts     = {};
 
-// ── CHART.JS GLOBAL DEFAULTS ────────────────────────────────────────────────
-Chart.defaults.color = '#64748b';
-Chart.defaults.borderColor = '#1e2d45';
+// ── THEME ─────────────────────────────────────────────────────────────────────
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('theme-color-meta').content =
+    theme === 'dark' ? '#0a0f1e' : '#f8fafc';
+  localStorage.setItem(LS_THEME_KEY, theme);
+  // Update Chart.js defaults to match theme
+  const isDark = theme === 'dark';
+  Chart.defaults.color       = isDark ? '#64748b' : '#94a3b8';
+  Chart.defaults.borderColor = isDark ? '#1e2d45' : '#e2e8f0';
+  // Re-render charts if they exist
+  if (charts.bp) updateChartTheme();
+}
+
+function updateChartTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const gridColor = isDark ? 'rgba(30,45,69,0.6)' : 'rgba(226,232,240,0.8)';
+  const tickColor = isDark ? '#64748b' : '#94a3b8';
+  const ttBg      = isDark ? '#111827' : '#ffffff';
+  const ttBorder  = isDark ? '#1e2d45' : '#e2e8f0';
+  const ttTitle   = isDark ? '#94a3b8' : '#64748b';
+  const ttBody    = isDark ? '#e2e8f0' : '#0f172a';
+
+  [charts.bp, charts.hr, charts.wt].forEach(c => {
+    if (!c) return;
+    c.options.scales.x.grid.color  = gridColor;
+    c.options.scales.y.grid.color  = gridColor;
+    c.options.scales.x.ticks.color = tickColor;
+    c.options.scales.y.ticks.color = tickColor;
+    c.options.plugins.tooltip.backgroundColor = ttBg;
+    c.options.plugins.tooltip.borderColor     = ttBorder;
+    c.options.plugins.tooltip.titleColor      = ttTitle;
+    c.options.plugins.tooltip.bodyColor       = ttBody;
+    c.update('none');
+  });
+}
+
+applyTheme(localStorage.getItem(LS_THEME_KEY) || 'light');
+
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+// ── CHART.JS DEFAULTS ─────────────────────────────────────────────────────────
 Chart.defaults.font.family = "'DM Mono', monospace";
-Chart.defaults.font.size = 10;
+Chart.defaults.font.size   = 10;
 
-// ── FETCH DATA ───────────────────────────────────────────────────────────────
+// ── FETCH DATA ────────────────────────────────────────────────────────────────
 async function fetchData() {
-  // Google Sheets public JSON export — works for "anyone with link can view"
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
+  const url  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
   const res  = await fetch(url);
   const text = await res.text();
-  // GViz response is wrapped in a callback: google.visualization.Query.setResponse({...})
   const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
   return parseGViz(json);
 }
@@ -443,11 +616,9 @@ function parseGViz(json) {
     cols.forEach((col, i) => { obj[col] = vals[i]?.v ?? null; });
     return obj;
   }).map(obj => {
-    // Parse date — GViz returns date strings or Date(...) literals
     let date;
     const rawDate = obj['date'] || obj[''];
     if (typeof rawDate === 'string') {
-      // GViz sometimes returns "Date(2026,5,6,9,32,0)" format
       const dm = rawDate.match(/Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)/);
       if (dm) {
         date = new Date(+dm[1], +dm[2], +dm[3], +(dm[4]||0), +(dm[5]||0), +(dm[6]||0));
@@ -461,28 +632,27 @@ function parseGViz(json) {
       date = null;
     }
 
-    // Column names from your sheet headers
     const findCol = (...keys) => {
-      for (const k of keys) {
-        for (const col of Object.keys(obj)) {
+      for (const k of keys)
+        for (const col of Object.keys(obj))
           if (col.includes(k)) return obj[col];
-        }
-      }
       return null;
     };
 
+    const toNum = v => { const n = Number(v); return (!v && v !== 0) || isNaN(n) ? null : n; };
+
     return {
       date,
-      sys:    Number(findCol('systolic','sys')),
-      dia:    Number(findCol('diastolic','dia')),
-      hr:     Number(findCol('heart','hr')),
-      weight: Number(findCol('weight','wt')),
+      sys:    toNum(findCol('systolic','sys')),
+      dia:    toNum(findCol('diastolic','dia')),
+      hr:     toNum(findCol('heart','hr')),
+      weight: toNum(findCol('weight','wt')),
     };
-  }).filter(r => r.date && !isNaN(r.date.getTime()) && r.sys)
+  }).filter(r => r.date && !isNaN(r.date.getTime()))
     .sort((a, b) => a.date - b.date);
 }
 
-// ── FILTER BY RANGE ──────────────────────────────────────────────────────────
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 function filterRows(rows, days) {
   if (!days) return rows;
   const cutoff = new Date();
@@ -490,246 +660,181 @@ function filterRows(rows, days) {
   return rows.filter(r => r.date >= cutoff);
 }
 
-// ── STATS ────────────────────────────────────────────────────────────────────
 function avg(arr) {
   if (!arr.length) return null;
   return arr.reduce((s, v) => s + v, 0) / arr.length;
 }
 
 function fmt(val, decimals = 0) {
-  if (val === null || isNaN(val)) return '—';
-  return val.toFixed(decimals);
+  if (val === null || val === undefined || isNaN(val)) return '—';
+  return Number(val).toFixed(decimals);
 }
 
-// ── DATE LABELS ──────────────────────────────────────────────────────────────
 function dateLabel(d) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-// ── RENDER ───────────────────────────────────────────────────────────────────
-function render(rows) {
-  const filtered = filterRows(rows, activeDays);
-  const content  = document.getElementById('content');
+// ── CHART INIT ────────────────────────────────────────────────────────────────
+const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
-  if (!filtered.length) {
-    content.innerHTML = `
-      <div class="state-view">
-        <div class="state-icon">📭</div>
-        <div class="state-msg">No entries in this range.<br>Log some vitals to see trends.</div>
-      </div>`;
-    return;
-  }
-
-  const labels = filtered.map(r => dateLabel(r.date));
-  const latest = filtered[filtered.length - 1];
-
-  const avgSys = avg(filtered.map(r => r.sys));
-  const avgDia = avg(filtered.map(r => r.dia));
-  const avgHr  = avg(filtered.map(r => r.hr));
-  const avgWt  = avg(filtered.map(r => r.weight));
-
-  // Destroy existing charts
-  Object.values(charts).forEach(c => c.destroy());
-  charts = {};
-
-  content.innerHTML = `
-    <!-- STAT CHIPS -->
-    <div class="stats-row">
-      <div class="stat-chip chip-bp">
-        <div class="stat-label">Latest BP</div>
-        <div class="stat-value">${fmt(latest.sys)}/${fmt(latest.dia)}</div>
-        <div class="stat-sub">avg ${fmt(avgSys)}/${fmt(avgDia)}</div>
-      </div>
-      <div class="stat-chip chip-hr">
-        <div class="stat-label">Latest HR</div>
-        <div class="stat-value">${fmt(latest.hr)}</div>
-        <div class="stat-sub">avg ${fmt(avgHr)} bpm</div>
-      </div>
-      <div class="stat-chip chip-wt">
-        <div class="stat-label">Latest Weight</div>
-        <div class="stat-value">${fmt(latest.weight, 1)}</div>
-        <div class="stat-sub">avg ${fmt(avgWt, 1)} lbs</div>
-      </div>
-      <div class="stat-chip chip-avg">
-        <div class="stat-label">Entries</div>
-        <div class="stat-value">${filtered.length}</div>
-        <div class="stat-sub">${activeDays ? `last ${activeDays}d` : 'all time'}</div>
-      </div>
-    </div>
-
-    <!-- BP CHART -->
-    <div class="chart-card">
-      <div class="chart-header">
-        <div class="chart-title">Blood Pressure</div>
-        <div class="chart-legend">
-          <div class="legend-item">
-            <div class="legend-dot" style="background:var(--c-sys)"></div>SYS
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background:var(--c-dia)"></div>DIA
-          </div>
-        </div>
-      </div>
-      <div class="chart-wrap"><canvas id="chart-bp"></canvas></div>
-    </div>
-
-    <!-- HR CHART -->
-    <div class="chart-card">
-      <div class="chart-header">
-        <div class="chart-title">Heart Rate</div>
-        <div class="chart-legend">
-          <div class="legend-item">
-            <div class="legend-dot" style="background:var(--c-hr)"></div>bpm
-          </div>
-        </div>
-      </div>
-      <div class="chart-wrap"><canvas id="chart-hr"></canvas></div>
-    </div>
-
-    <!-- WEIGHT CHART -->
-    <div class="chart-card">
-      <div class="chart-header">
-        <div class="chart-title">Weight</div>
-        <div class="chart-legend">
-          <div class="legend-item">
-            <div class="legend-dot" style="background:var(--c-wt)"></div>lbs
-          </div>
-        </div>
-      </div>
-      <div class="chart-wrap"><canvas id="chart-wt"></canvas></div>
-    </div>
-
-    <!-- REFRESH -->
-    <button class="refresh-btn" id="refresh-btn" onclick="doRefresh()">
-      <span class="refresh-icon" id="refresh-icon">↻</span> Refresh data
-    </button>
-  `;
-
-  const commonOpts = (yLabel) => ({
+function chartOpts() {
+  const d = isDark();
+  return {
     responsive: true,
     maintainAspectRatio: false,
+    animation: { duration: 250 },
+    spanGaps: true,       // ← draws a line across null gaps instead of breaking
     interaction: { mode: 'index', intersect: false },
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#111827',
-        borderColor: '#1e2d45',
+        backgroundColor: d ? '#111827' : '#ffffff',
+        borderColor:     d ? '#1e2d45' : '#e2e8f0',
         borderWidth: 1,
-        titleColor: '#94a3b8',
-        bodyColor: '#e2e8f0',
+        titleColor:  d ? '#94a3b8' : '#64748b',
+        bodyColor:   d ? '#e2e8f0' : '#0f172a',
         padding: 10,
         displayColors: true,
-        boxWidth: 8,
-        boxHeight: 8,
+        boxWidth: 8, boxHeight: 8,
+        filter: item => item.raw !== null,
       },
     },
     scales: {
       x: {
-        grid: { color: 'rgba(30,45,69,0.6)', drawTicks: false },
-        ticks: {
-          maxTicksLimit: 6,
-          maxRotation: 0,
-          color: '#64748b',
-        },
+        grid: { color: d ? 'rgba(30,45,69,0.6)' : 'rgba(226,232,240,0.8)', drawTicks: false },
+        ticks: { maxTicksLimit: 6, maxRotation: 0, color: d ? '#64748b' : '#94a3b8' },
         border: { display: false },
       },
       y: {
-        grid: { color: 'rgba(30,45,69,0.6)', drawTicks: false },
-        ticks: { color: '#64748b', padding: 6 },
+        grid: { color: d ? 'rgba(30,45,69,0.6)' : 'rgba(226,232,240,0.8)', drawTicks: false },
+        ticks: { color: d ? '#64748b' : '#94a3b8', padding: 6 },
         border: { display: false },
-        title: { display: false },
       },
     },
     elements: {
-      point: {
-        radius: filtered.length > 30 ? 2 : 4,
-        hoverRadius: 6,
-        borderWidth: 2,
-      },
-      line: { tension: 0.35, borderWidth: 2 },
+      point: { radius: 4, hoverRadius: 6, borderWidth: 2 },
+      line:  { tension: 0.35, borderWidth: 2 },
     },
-  });
-
-  const makeGradient = (ctx, colorHex) => {
-    const g = ctx.createLinearGradient(0, 0, 0, 160);
-    g.addColorStop(0, colorHex + '33');
-    g.addColorStop(1, colorHex + '00');
-    return g;
   };
+}
 
-  // BP Chart
+function makeGradient(ctx, colorHex) {
+  const g = ctx.createLinearGradient(0, 0, 0, 160);
+  g.addColorStop(0, colorHex + '33');
+  g.addColorStop(1, colorHex + '00');
+  return g;
+}
+
+function initCharts() {
   const bpCtx = document.getElementById('chart-bp').getContext('2d');
   charts.bp = new Chart(bpCtx, {
     type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Systolic',
-          data: filtered.map(r => r.sys),
-          borderColor: '#ef4444',
-          backgroundColor: makeGradient(bpCtx, '#ef4444'),
-          fill: true,
-          pointBackgroundColor: '#ef4444',
-        },
-        {
-          label: 'Diastolic',
-          data: filtered.map(r => r.dia),
-          borderColor: '#f97316',
-          backgroundColor: makeGradient(bpCtx, '#f97316'),
-          fill: true,
-          pointBackgroundColor: '#f97316',
-        },
-      ],
-    },
-    options: {
-      ...commonOpts('mmHg'),
-      // Add reference lines for normal BP
-      plugins: {
-        ...commonOpts().plugins,
-        annotation: undefined, // skip annotation plugin to keep deps minimal
-      },
-    },
+    data: { labels: [], datasets: [
+      { label:'Systolic',  data:[], borderColor:'#dc2626', backgroundColor: makeGradient(bpCtx,'#dc2626'), fill:true, pointBackgroundColor:'#dc2626' },
+      { label:'Diastolic', data:[], borderColor:'#ea580c', backgroundColor: makeGradient(bpCtx,'#ea580c'), fill:true, pointBackgroundColor:'#ea580c' },
+    ]},
+    options: chartOpts(),
   });
 
-  // HR Chart
   const hrCtx = document.getElementById('chart-hr').getContext('2d');
   charts.hr = new Chart(hrCtx, {
     type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Heart Rate',
-        data: filtered.map(r => r.hr),
-        borderColor: '#06b6d4',
-        backgroundColor: makeGradient(hrCtx, '#06b6d4'),
-        fill: true,
-        pointBackgroundColor: '#06b6d4',
-      }],
-    },
-    options: commonOpts('bpm'),
+    data: { labels: [], datasets: [
+      { label:'Heart Rate', data:[], borderColor:'#0891b2', backgroundColor: makeGradient(hrCtx,'#0891b2'), fill:true, pointBackgroundColor:'#0891b2' },
+    ]},
+    options: chartOpts(),
   });
 
-  // Weight Chart
   const wtCtx = document.getElementById('chart-wt').getContext('2d');
   charts.wt = new Chart(wtCtx, {
     type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Weight',
-        data: filtered.map(r => r.weight),
-        borderColor: '#10b981',
-        backgroundColor: makeGradient(wtCtx, '#10b981'),
-        fill: true,
-        pointBackgroundColor: '#10b981',
-      }],
-    },
-    options: commonOpts('lbs'),
+    data: { labels: [], datasets: [
+      { label:'Weight', data:[], borderColor:'#059669', backgroundColor: makeGradient(wtCtx,'#059669'), fill:true, pointBackgroundColor:'#059669' },
+    ]},
+    options: chartOpts(),
   });
+
+  // Apply dark-mode colors to chart lines if starting in dark
+  if (isDark()) {
+    charts.bp.data.datasets[0].borderColor = '#ef4444';
+    charts.bp.data.datasets[0].pointBackgroundColor = '#ef4444';
+    charts.bp.data.datasets[1].borderColor = '#f97316';
+    charts.bp.data.datasets[1].pointBackgroundColor = '#f97316';
+    charts.hr.data.datasets[0].borderColor = '#06b6d4';
+    charts.hr.data.datasets[0].pointBackgroundColor = '#06b6d4';
+    charts.wt.data.datasets[0].borderColor = '#10b981';
+    charts.wt.data.datasets[0].pointBackgroundColor = '#10b981';
+  }
 }
 
-// ── REFRESH ──────────────────────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(rows) {
+  const filtered = filterRows(rows, activeDays);
+
+  document.getElementById('state-loading').style.display = 'none';
+  const empty    = document.getElementById('state-empty');
+  const dataViews = document.getElementById('data-views');
+
+  if (!filtered.length) {
+    empty.style.display     = 'flex';
+    dataViews.style.display = 'none';
+    return;
+  }
+
+  empty.style.display     = 'none';
+  dataViews.style.display = '';
+
+  const labels = filtered.map(r => dateLabel(r.date));
+
+  // Null-safe latest: walk backward to find most recent non-null value per metric
+  const latestWith = k => {
+    for (let i = filtered.length - 1; i >= 0; i--) {
+      const v = filtered[i][k];
+      if (v !== null && !isNaN(v)) return v;
+    }
+    return null;
+  };
+
+  const latestSys = latestWith('sys');
+  const latestDia = latestWith('dia');
+  const latestHr  = latestWith('hr');
+  const latestWt  = latestWith('weight');
+
+  // Null-safe averages
+  const vals   = k => filtered.map(r => r[k]).filter(v => v !== null && !isNaN(v));
+  const avgSys = avg(vals('sys'));
+  const avgDia = avg(vals('dia'));
+  const avgHr  = avg(vals('hr'));
+  const avgWt  = avg(vals('weight'));
+
+  document.getElementById('stat-bp').textContent     = `${fmt(latestSys)}/${fmt(latestDia)}`;
+  document.getElementById('stat-bp-avg').textContent = `avg ${fmt(avgSys)}/${fmt(avgDia)}`;
+  document.getElementById('stat-hr').textContent     = fmt(latestHr);
+  document.getElementById('stat-hr-avg').textContent = `avg ${fmt(avgHr)} bpm`;
+  document.getElementById('stat-wt').textContent     = fmt(latestWt, 1);
+  document.getElementById('stat-wt-avg').textContent = `avg ${fmt(avgWt, 1)} lbs`;
+  document.getElementById('stat-count').textContent  = filtered.length;
+  document.getElementById('stat-range').textContent  = activeDays ? `last ${activeDays}d` : 'all time';
+
+  const ptRadius = filtered.length > 30 ? 2 : 4;
+  [charts.bp, charts.hr, charts.wt].forEach(c => { c.options.elements.point.radius = ptRadius; });
+
+  // Pass null through directly — Chart.js + spanGaps:true handles gaps
+  charts.bp.data.labels            = labels;
+  charts.bp.data.datasets[0].data  = filtered.map(r => r.sys);
+  charts.bp.data.datasets[1].data  = filtered.map(r => r.dia);
+  charts.bp.update();
+
+  charts.hr.data.labels            = labels;
+  charts.hr.data.datasets[0].data  = filtered.map(r => r.hr);
+  charts.hr.update();
+
+  charts.wt.data.labels            = labels;
+  charts.wt.data.datasets[0].data  = filtered.map(r => r.weight);
+  charts.wt.update();
+}
+
+// ── REFRESH ───────────────────────────────────────────────────────────────────
 async function doRefresh() {
   const btn  = document.getElementById('refresh-btn');
   const icon = document.getElementById('refresh-icon');
@@ -738,18 +843,14 @@ async function doRefresh() {
   icon.style.transition = 'transform 0.5s ease';
   icon.style.transform  = 'rotate(360deg)';
   setTimeout(() => { icon.style.transition = ''; icon.style.transform = ''; }, 500);
-
   try {
     allRows = await fetchData();
     render(allRows);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    if (btn) btn.disabled = false;
-  }
+  } catch(e) { console.error(e); }
+  finally { if (btn) btn.disabled = false; }
 }
 
-// ── RANGE PILLS ──────────────────────────────────────────────────────────────
+// ── RANGE PILLS ───────────────────────────────────────────────────────────────
 document.querySelectorAll('.range-pill').forEach(pill => {
   pill.addEventListener('click', () => {
     document.querySelectorAll('.range-pill').forEach(p => p.classList.remove('active'));
@@ -759,26 +860,22 @@ document.querySelectorAll('.range-pill').forEach(pill => {
   });
 });
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────────────────────────────
 (async () => {
+  initCharts();
   try {
     allRows = await fetchData();
     render(allRows);
   } catch (err) {
     console.error(err);
-    document.getElementById('content').innerHTML = `
-      <div class="state-view">
-        <div class="state-icon">⚠️</div>
-        <div class="state-msg">
-          Couldn't load data.<br>
-          Make sure your sheet is set to<br>"Anyone with link can view."<br><br>
-          <small style="opacity:0.5">${err.message}</small>
-        </div>
-      </div>`;
+    document.getElementById('state-loading').style.display = 'none';
+    const errEl = document.getElementById('state-error');
+    errEl.style.display = 'flex';
+    document.getElementById('error-msg').innerHTML =
+      `Couldn't load data.<br>Make sure your sheet is set to<br>"Anyone with link can view."<br><br><small style="opacity:0.5">${err.message}</small>`;
   }
 })();
 
-// Register service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }

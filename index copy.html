@@ -1,38 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Vitals" />
-  <meta name="theme-color" content="#f8fafc" id="theme-color-meta" />
+  <meta name="theme-color" content="#0a0f1e" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Vitals</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap');
 
-    /* ── LIGHT THEME (default) ── */
-    :root, [data-theme="light"] {
-      --bg:        #f8fafc;
-      --surface:   #ffffff;
-      --border:    #e2e8f0;
-      --accent:    #2563eb;
-      --accent2:   #0891b2;
-      --text:      #0f172a;
-      --muted:     #64748b;
-      --success:   #059669;
-      --error:     #dc2626;
-      --radius:    16px;
-      --shadow:    0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
-      --bg-grad1:  rgba(37,99,235,0.06);
-      --bg-grad2:  rgba(8,145,178,0.04);
-      --nav-bg:    rgba(248,250,252,0.92);
-    }
-
-    /* ── DARK THEME ── */
-    [data-theme="dark"] {
+    :root {
       --bg:        #0a0f1e;
       --surface:   #111827;
       --border:    #1e2d45;
@@ -43,10 +24,6 @@
       --success:   #10b981;
       --error:     #ef4444;
       --radius:    16px;
-      --shadow:    0 1px 3px rgba(0,0,0,0.3), 0 24px 48px rgba(0,0,0,0.4);
-      --bg-grad1:  rgba(59,130,246,0.15);
-      --bg-grad2:  rgba(6,182,212,0.08);
-      --nav-bg:    rgba(10,15,30,0.92);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -58,7 +35,6 @@
       font-family: 'DM Mono', monospace;
       -webkit-font-smoothing: antialiased;
       overscroll-behavior: none;
-      transition: background 0.2s, color 0.2s;
     }
 
     body {
@@ -69,8 +45,8 @@
       min-height: 100dvh;
       padding: env(safe-area-inset-top, 20px) 24px calc(env(safe-area-inset-bottom, 0px) + 74px);
       background-image:
-        radial-gradient(ellipse 80% 50% at 50% -10%, var(--bg-grad1) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 110%, var(--bg-grad2) 0%, transparent 60%);
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59,130,246,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 110%, rgba(6,182,212,0.08) 0%, transparent 60%);
     }
 
     .card {
@@ -79,111 +55,61 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 28px 28px 24px;
-      box-shadow: var(--shadow);
-      transition: background 0.2s, border-color 0.2s;
+      padding: 32px 28px 28px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.03),
+                  0 24px 48px rgba(0,0,0,0.4);
     }
 
-    /* ── HEADER ── */
     .header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 28px;
+      margin-bottom: 32px;
     }
 
-    .header-left h1 {
+    .header h1 {
       font-family: 'Syne', sans-serif;
       font-size: 28px;
       font-weight: 800;
       letter-spacing: -0.5px;
       line-height: 1;
-      color: var(--text);
+      background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .header-left .subtitle {
-      font-size: 12px;
+    .header .subtitle {
+      font-size: 11px;
       color: var(--muted);
       margin-top: 6px;
-      letter-spacing: 0.04em;
-    }
-
-    /* ── THEME TOGGLE ── */
-    .theme-toggle {
-      background: var(--border);
-      border: none;
-      border-radius: 100px;
-      width: 44px;
-      height: 26px;
-      cursor: pointer;
-      position: relative;
-      flex-shrink: 0;
-      transition: background 0.2s;
-      -webkit-tap-highlight-color: transparent;
-      margin-top: 4px;
-    }
-
-    .theme-toggle::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--surface);
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-    }
-
-    [data-theme="dark"] .theme-toggle {
-      background: var(--accent);
-    }
-
-    [data-theme="dark"] .theme-toggle::after {
-      transform: translateX(18px);
-    }
-
-    .theme-toggle-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .theme-label {
-      font-size: 9px;
-      color: var(--muted);
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      user-select: none;
     }
 
-    /* ── FIELDS ── */
     .fields {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 14px;
+      margin-bottom: 28px;
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 6px;
     }
 
     .field label {
-      font-size: 13px;
+      font-size: 10px;
       font-weight: 500;
-      color: var(--text);
-      letter-spacing: 0.02em;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       padding-left: 2px;
     }
 
     .field-hint {
-      font-size: 11px;
+      font-size: 9px;
       color: var(--muted);
+      opacity: 0.6;
       padding-left: 2px;
     }
 
@@ -203,12 +129,12 @@
 
     input {
       width: 100%;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       color: var(--text);
       font-family: 'DM Mono', monospace;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 400;
       padding: 14px 16px 14px 44px;
       outline: none;
@@ -220,61 +146,27 @@
     input::placeholder {
       color: var(--muted);
       opacity: 0.5;
-      font-size: 18px;
+      font-size: 16px;
     }
 
     input:focus {
       border-color: var(--accent);
-      background: var(--surface);
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
-    }
-
-    [data-theme="dark"] input:focus {
+      background: rgba(59,130,246,0.06);
       box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
     }
 
     input.error {
       border-color: var(--error);
-      box-shadow: 0 0 0 3px rgba(220,38,38,0.12);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
     }
 
-    /* ── BP ROW ── */
-    .bp-row {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: end;
-      gap: 0;
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
     }
 
-    .bp-sep {
-      font-family: 'DM Mono', monospace;
-      font-size: 22px;
-      font-weight: 400;
-      color: var(--muted);
-      text-align: center;
-      padding: 0 6px 14px;
-      line-height: 1;
-      opacity: 0.5;
-      user-select: none;
-    }
-
-    .bp-row .input-wrap:first-child input {
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
-    }
-
-    .bp-row .input-wrap:last-child input {
-      border-top-left-radius: 6px;
-      border-bottom-left-radius: 6px;
-    }
-
-    .bp-row input {
-      padding-left: 16px;
-      text-align: center;
-    }
-
-    /* ── BUTTON ── */
-    button#save-btn {
+    button {
       width: 100%;
       padding: 16px;
       border: none;
@@ -282,27 +174,37 @@
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
       color: #fff;
       font-family: 'Syne', sans-serif;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       letter-spacing: 0.04em;
       cursor: pointer;
       transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
-      box-shadow: 0 4px 20px rgba(37,99,235,0.25);
+      box-shadow: 0 4px 20px rgba(59,130,246,0.3);
       -webkit-tap-highlight-color: transparent;
       position: relative;
       overflow: hidden;
     }
 
-    button#save-btn:active  { transform: scale(0.98); opacity: 0.9; }
-    button#save-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    button:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
 
-    .btn-text    { display: block; }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-text { display: block; }
     .btn-spinner { display: none; }
-    button#save-btn.loading .btn-text    { display: none; }
-    button#save-btn.loading .btn-spinner { display: block; }
+
+    button.loading .btn-text { display: none; }
+    button.loading .btn-spinner { display: block; }
 
     .spinner {
-      width: 18px; height: 18px;
+      width: 18px;
+      height: 18px;
       border: 2px solid rgba(255,255,255,0.3);
       border-top-color: #fff;
       border-radius: 50%;
@@ -312,61 +214,61 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── TOAST ── */
     .toast {
       position: fixed;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
       left: 50%;
       transform: translateX(-50%) translateY(80px);
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 100px;
       padding: 12px 20px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       white-space: nowrap;
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
       opacity: 0;
       z-index: 100;
-      box-shadow: var(--shadow);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
 
-    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    .toast.success    { border-color: var(--success); color: var(--success); }
-    .toast.error-toast { border-color: var(--error);   color: var(--error); }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
 
-    /* ── LAST SAVED ── */
+    .toast.success { border-color: var(--success); color: var(--success); }
+    .toast.error-toast { border-color: var(--error); color: var(--error); }
+
     .last-saved {
       text-align: center;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--muted);
-      margin-top: 14px;
-      letter-spacing: 0.04em;
-      min-height: 16px;
+      margin-top: 16px;
+      letter-spacing: 0.06em;
+      min-height: 14px;
     }
 
-    /* ── FIELD ERRORS ── */
     .field-error {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--error);
       padding-left: 2px;
       display: none;
     }
+
     .field-error.visible { display: block; }
 
-    /* ── BOTTOM NAV ── */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
       z-index: 50;
-      background: var(--nav-bg);
+      background: rgba(10,15,30,0.92);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid var(--border);
       padding: 10px 0 calc(env(safe-area-inset-bottom, 0px) + 10px);
       display: flex;
       justify-content: center;
-      transition: background 0.2s, border-color 0.2s;
     }
 
     .nav-tab {
@@ -380,7 +282,7 @@
       text-decoration: none;
       color: var(--muted);
       font-family: 'DM Mono', monospace;
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       transition: color 0.15s;
@@ -390,20 +292,51 @@
     .nav-tab svg { opacity: 0.5; transition: opacity 0.15s; }
     .nav-tab.active { color: var(--accent); }
     .nav-tab.active svg { opacity: 1; }
+
+    .bp-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: 0;
+    }
+
+    .bp-sep {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: center;
+      padding: 0 6px 14px;
+      line-height: 1;
+      opacity: 0.5;
+      user-select: none;
+    }
+
+    /* tighter left-radius on right input, right-radius on left input
+       so they visually pair without gap */
+    .bp-row .input-wrap:first-child input {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+
+    .bp-row .input-wrap:last-child input {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
+
+    /* inputs inside bp-row don't need left padding for icon — no icon */
+    .bp-row input {
+      padding-left: 16px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
 
 <div class="card">
   <div class="header">
-    <div class="header-left">
-      <h1>Vitals</h1>
-      <div class="subtitle" id="today-date">—</div>
-    </div>
-    <div class="theme-toggle-wrap">
-      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode"></button>
-      <span class="theme-label" id="theme-label">Light</span>
-    </div>
+    <h1>Vitals</h1>
+    <div class="subtitle" id="today-date">—</div>
   </div>
 
   <div class="fields">
@@ -468,42 +401,25 @@
 </nav>
 
 <script>
-  // ── CONFIG ────────────────────────────────────────────────────────────────
+  // ── CONFIG ──────────────────────────────────────────────────────────────
+  // After deploying your Apps Script, paste the URL here:
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqv-qlhP_7phP4V97nJg0jY-D3emsLZyI42RQfHgSX3nciZSPNgHiUX5xoFolOUIiKOw/exec';
-  // ─────────────────────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────────────────────────────
 
-  const LS_KEY       = 'vitals_last_saved';
-  const LS_THEME_KEY = 'vitals_theme';
+  const LS_KEY = 'vitals_last_saved';
 
-  // ── THEME ─────────────────────────────────────────────────────────────────
-  function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    document.getElementById('theme-label').textContent =
-      theme === 'dark' ? 'Dark' : 'Light';
-    document.getElementById('theme-color-meta').content =
-      theme === 'dark' ? '#0a0f1e' : '#f8fafc';
-    localStorage.setItem(LS_THEME_KEY, theme);
-  }
-
-  // Default: light. Load saved preference.
-  applyTheme(localStorage.getItem(LS_THEME_KEY) || 'light');
-
-  document.getElementById('theme-toggle').addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    applyTheme(current === 'dark' ? 'light' : 'dark');
-  });
-
-  // ── DATE ──────────────────────────────────────────────────────────────────
   function formatDate(d) {
     return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
   }
 
   document.getElementById('today-date').textContent = formatDate(new Date());
 
+  // Restore last-saved display
   const ls = localStorage.getItem(LS_KEY);
-  if (ls) document.getElementById('last-saved').textContent = `Last saved: ${ls}`;
+  if (ls) {
+    document.getElementById('last-saved').textContent = `Last saved: ${ls}`;
+  }
 
-  // ── TOAST ─────────────────────────────────────────────────────────────────
   function showToast(msg, type = 'success') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -514,7 +430,6 @@
     });
   }
 
-  // ── VALIDATION HELPERS ────────────────────────────────────────────────────
   function clearErrors() {
     ['bp-sys','bp-dia','hr','weight'].forEach(id => {
       document.getElementById(id).classList.remove('error');
@@ -525,49 +440,39 @@
   }
 
   function setError(id, msg) {
-    document.getElementById(id).classList.add('error');
+    const el = document.getElementById(id);
+    el.classList.add('error');
+    // bp-sys and bp-dia share the bp-error element
     const errKey = (id === 'bp-sys' || id === 'bp-dia') ? 'bp' : id;
-    const errEl  = document.getElementById(`${errKey}-error`);
+    const errEl = document.getElementById(`${errKey}-error`);
     if (msg) errEl.textContent = msg;
     errEl.classList.add('visible');
   }
 
-  // ── SAVE ──────────────────────────────────────────────────────────────────
   async function handleSave() {
     clearErrors();
 
-    const sysRaw    = document.getElementById('bp-sys').value.trim();
-    const diaRaw    = document.getElementById('bp-dia').value.trim();
+    const sys       = parseInt(document.getElementById('bp-sys').value.trim());
+    const dia       = parseInt(document.getElementById('bp-dia').value.trim());
     const hrRaw     = document.getElementById('hr').value.trim();
     const weightRaw = document.getElementById('weight').value.trim();
 
-    const sys = sysRaw ? parseInt(sysRaw)   : null;
-    const dia = diaRaw ? parseInt(diaRaw)   : null;
-    const hr  = hrRaw  ? parseInt(hrRaw)    : null;
-    const wt  = weightRaw ? parseFloat(weightRaw) : null;
-
     let valid = true;
 
-    // BP: either both filled and valid, or both empty
-    const sysEntered = sys !== null;
-    const diaEntered = dia !== null;
-    if (sysEntered && (isNaN(sys) || sys < 50 || sys > 300)) { setError('bp-sys'); valid = false; }
-    if (diaEntered && (isNaN(dia) || dia < 30 || dia > 200)) { setError('bp-dia'); valid = false; }
-    if (sysEntered !== diaEntered) {
-      setError('bp-sys');
-      setError('bp-dia');
-      document.getElementById('bp-error').textContent = 'Enter both systolic and diastolic, or neither';
-      document.getElementById('bp-error').classList.add('visible');
+    if (isNaN(sys) || sys < 50 || sys > 300) { setError('bp-sys'); valid = false; }
+    if (isNaN(dia) || dia < 30 || dia > 200) { setError('bp-dia'); valid = false; }
+    if (!valid) { document.getElementById('bp-error').classList.add('visible'); }
+
+    const hr = parseInt(hrRaw);
+    if (!hrRaw || isNaN(hr) || hr < 30 || hr > 250) {
+      setError('hr');
       valid = false;
     }
 
-    if (hrRaw && (isNaN(hr) || hr < 30 || hr > 250))       { setError('hr');     valid = false; }
-    if (weightRaw && (isNaN(wt) || wt < 50 || wt > 999))   { setError('weight'); valid = false; }
-
-    // At least one field must have a value
-    if (!sysEntered && !hrRaw && !weightRaw) {
-      showToast('Enter at least one value', 'error');
-      return;
+    const weight = parseFloat(weightRaw);
+    if (!weightRaw || isNaN(weight) || weight < 50 || weight > 999) {
+      setError('weight');
+      valid = false;
     }
 
     if (!valid) return;
@@ -584,20 +489,24 @@
     const now = new Date();
     const payload = {
       date:   now.toISOString(),
-      sys:    sysEntered ? sys : null,
-      dia:    diaEntered ? dia : null,
-      hr:     hrRaw      ? hr  : null,
-      weight: weightRaw  ? wt  : null,
+      sys:    sys,
+      dia:    dia,
+      hr:     hr,
+      weight: weight,
     };
 
     try {
-      const res  = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
       const text = await res.text();
       if (res.ok && text.includes('OK')) {
         const ts = formatDate(now) + ' ' + now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
         localStorage.setItem(LS_KEY, ts);
         document.getElementById('last-saved').textContent = `Last saved: ${ts}`;
-        showToast('✓ Saved', 'success');
+        showToast('✓ Saved to sheet', 'success');
+        // Clear fields
         ['bp-sys','bp-dia','hr','weight'].forEach(id => document.getElementById(id).value = '');
       } else {
         showToast('Save failed — check console', 'error');
@@ -612,7 +521,7 @@
     }
   }
 
-  // ── KEYBOARD NAV ──────────────────────────────────────────────────────────
+  // Enter/Tab advances fields: sys → dia → hr → weight → save
   const FIELD_ORDER = ['bp-sys', 'bp-dia', 'hr', 'weight'];
   FIELD_ORDER.forEach((id, i) => {
     document.getElementById(id).addEventListener('keydown', e => {
@@ -629,7 +538,7 @@
     if (e.target.value.length >= 3) document.getElementById('bp-dia').focus();
   });
 
-  // ── SERVICE WORKER ────────────────────────────────────────────────────────
+  // Register service worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(console.error);
   }
